@@ -93,7 +93,6 @@ namespace Malom.Model
                     if (success) TileDeleted?.Invoke(this, new MillsTileEventArgs(_playerOnTurn.ToString(), null, to, _steps));
                     break;
             }
-            //Inform model that tile has been clicked
             if (!success) return false;
 
             //end of round conditions, change player
