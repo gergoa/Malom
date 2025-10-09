@@ -1,0 +1,34 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.13.35919.96
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Malom", "Malom\Malom.csproj", "{869B4F69-FA4C-4D6E-B5D8-7A7252B75559}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MalomView", "MalomView\MalomView.csproj", "{B6B3EA7B-FC58-41AB-97F3-25F851052BEA}"
+	ProjectSection(ProjectDependencies) = postProject
+		{869B4F69-FA4C-4D6E-B5D8-7A7252B75559} = {869B4F69-FA4C-4D6E-B5D8-7A7252B75559}
+	EndProjectSection
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{869B4F69-FA4C-4D6E-B5D8-7A7252B75559}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{869B4F69-FA4C-4D6E-B5D8-7A7252B75559}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{869B4F69-FA4C-4D6E-B5D8-7A7252B75559}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{869B4F69-FA4C-4D6E-B5D8-7A7252B75559}.Release|Any CPU.Build.0 = Release|Any CPU
+		{B6B3EA7B-FC58-41AB-97F3-25F851052BEA}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{B6B3EA7B-FC58-41AB-97F3-25F851052BEA}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{B6B3EA7B-FC58-41AB-97F3-25F851052BEA}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{B6B3EA7B-FC58-41AB-97F3-25F851052BEA}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {85A99070-BEBB-49C2-905B-3068D75A7E8B}
+	EndGlobalSection
+EndGlobal
