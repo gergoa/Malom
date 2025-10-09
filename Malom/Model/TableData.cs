@@ -36,7 +36,7 @@ namespace Malom.Model
             Connect(_tiles[12], _tiles[13], Direction.Right); Connect(_tiles[12], _tiles[17], Direction.Down);
             Connect(_tiles[13], _tiles[20], Direction.Down);
 
-            Connect(_tiles[14], _tiles[23], Direction.Down);
+            Connect(_tiles[14], _tiles[23], Direction.Down); Connect(_tiles[14], _tiles[15], Direction.Right);
 
             Connect(_tiles[15], _tiles[16], Direction.Right); 
             Connect(_tiles[16], _tiles[17], Direction.Right); Connect(_tiles[16], _tiles[19], Direction.Down);

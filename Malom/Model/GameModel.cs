@@ -27,13 +27,15 @@ namespace Malom.Model
 
         #region Properties
 
-        public String PlayerOnTurn => _playerOnTurn == Player.Red ? "Red" : "Blue";
-
         #endregion
 
         #region Events
-        public event EventHandler<MillsEventArgs>? TileClicked;
-        public event EventHandler<MillsEventArgs>? GameOver;
+        public event EventHandler<MillsTileEventArgs>? TilePlaced;
+        public event EventHandler<MillsTileEventArgs>? TileMoved;
+        public event EventHandler<MillsTileEventArgs>? TileDeleted;
+
+        public event EventHandler<MillsEventArgs>? RoundProgressed;
+        public event EventHandler<MillsTileEventArgs>? GameOver;
 
         #endregion
 
@@ -67,12 +69,14 @@ namespace Malom.Model
             {
                 case GamePhase.Placing:
                     success = _tableData.SetTile(to, _playerOnTurn);
+                    if (success) TilePlaced?.Invoke(this, new MillsTileEventArgs(_playerOnTurn.ToString(), null, to, _steps));
                     break;
 
                 case GamePhase.Moving:
                     if (_selectedPiece != null)
                     {
                         success = _tableData.Move((int)_selectedPiece, to, _playerOnTurn);
+                        if (success) TileMoved?.Invoke(this, new MillsTileEventArgs(_playerOnTurn.ToString(), _selectedPiece, to, _steps));
                         _selectedPiece = null;
                     }
                     else
@@ -86,10 +90,10 @@ namespace Malom.Model
                     success = _tableData.IsRemovable(to, _playerOnTurn) 
                         ? _tableData.ClearTile(to, _playerOnTurn) 
                         : false;
+                    if (success) TileDeleted?.Invoke(this, new MillsTileEventArgs(_playerOnTurn.ToString(), null, to, _steps));
                     break;
             }
             //Inform model that tile has been clicked
-            TileClicked?.Invoke(this, new MillsEventArgs(_playerOnTurn.ToString(), _selectedPiece, _steps, Phase.ToString() ));
             if (!success) return false;
 
             //end of round conditions, change player
@@ -100,6 +104,7 @@ namespace Malom.Model
                 _playerOnTurn = _playerOnTurn == Player.Red ? Player.Blue : Player.Red;
                 _steps++;
             }
+            RoundProgressed?.Invoke(this, new MillsEventArgs(Phase.ToString(), _playerOnTurn.ToString(), _steps));
 
             return true;
         }

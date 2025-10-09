@@ -6,16 +6,17 @@ using System.Threading.Tasks;
 
 namespace Malom.Model
 {
-    public class MillsEventArgs
+    public class MillsTileEventArgs : EventArgs
     {
-        public string NextAction { get; set; } // "Place", "Move", "Remove"
+        public int Position { get; set; }
+        public int? SelectedPosition { get; set; }
         public string PlayerOnTurn { get; set; }  // "Red", "Blue"
         public int Round { get; set; }
-
-        public MillsEventArgs(string nextAction, string playerOnTurn, int round)
+        public MillsTileEventArgs(string playerOnTurn, int? selectedPosition, int position, int round)
         {
-            NextAction = nextAction;
             PlayerOnTurn = playerOnTurn;
+            SelectedPosition = selectedPosition;
+            Position = position;
             Round = round;
         }
     }
