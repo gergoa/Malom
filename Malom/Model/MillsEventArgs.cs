@@ -9,14 +9,9 @@ namespace Malom.Model
     public class MillsEventArgs
     {
         public string NextAction { get; set; } // "Place", "Move", "Remove"
-        public string PlayerOnTurn { get; set; }  // "Red", "Blue"
-        public int Round { get; set; }
-
-        public MillsEventArgs(string nextAction, string playerOnTurn, int round)
+        public MillsEventArgs(string nextAction)
         {
             NextAction = nextAction;
-            PlayerOnTurn = playerOnTurn;
-            Round = round;
         }
     }
 }

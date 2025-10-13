@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 namespace Malom.Model
 { 
 
-    internal class TableData
+    public class TableData
     {
         private readonly Tile[] _tiles;
 

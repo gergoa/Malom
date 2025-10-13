@@ -64,6 +64,7 @@
             textBoxBlue = new TextBox();
             textBoxRedPieces = new TextBox();
             textBoxBluePieces = new TextBox();
+            roundCounter = new TextBox();
             panel1.SuspendLayout();
             menuStrip1.SuspendLayout();
             SuspendLayout();
@@ -455,48 +456,49 @@
             // 
             // startNewToolStripMenuItem
             // 
-            startNewToolStripMenuItem.Font = new Font("Segoe UI", 16F);
+            startNewToolStripMenuItem.Font = new Font("Tahoma", 9F);
             startNewToolStripMenuItem.ForeColor = Color.Black;
             startNewToolStripMenuItem.Name = "startNewToolStripMenuItem";
-            startNewToolStripMenuItem.Size = new Size(217, 54);
-            startNewToolStripMenuItem.Text = "Button";
+            startNewToolStripMenuItem.Size = new Size(270, 34);
+            startNewToolStripMenuItem.Text = "New Game";
             startNewToolStripMenuItem.TextAlign = ContentAlignment.TopCenter;
             // 
             // saveLoadToolStripMenuItem
             // 
             saveLoadToolStripMenuItem.DropDownItems.AddRange(new ToolStripItem[] { saveGameToolStripMenuItem, loadToolStripMenuItem });
-            saveLoadToolStripMenuItem.Font = new Font("Segoe UI", 16F);
+            saveLoadToolStripMenuItem.Font = new Font("Tahoma", 9F);
             saveLoadToolStripMenuItem.ForeColor = Color.Black;
             saveLoadToolStripMenuItem.Name = "saveLoadToolStripMenuItem";
-            saveLoadToolStripMenuItem.Size = new Size(217, 54);
-            saveLoadToolStripMenuItem.Text = "Button";
+            saveLoadToolStripMenuItem.Size = new Size(270, 34);
+            saveLoadToolStripMenuItem.Text = "Save/Load";
             saveLoadToolStripMenuItem.TextAlign = ContentAlignment.TopCenter;
             // 
             // saveGameToolStripMenuItem
             // 
-            saveGameToolStripMenuItem.Font = new Font("Segoe UI", 16F);
+            saveGameToolStripMenuItem.Font = new Font("Tahoma", 9F);
             saveGameToolStripMenuItem.ForeColor = Color.Black;
             saveGameToolStripMenuItem.Name = "saveGameToolStripMenuItem";
-            saveGameToolStripMenuItem.Size = new Size(225, 54);
-            saveGameToolStripMenuItem.Text = "Button";
+            saveGameToolStripMenuItem.Size = new Size(270, 34);
+            saveGameToolStripMenuItem.Text = "Save..";
             saveGameToolStripMenuItem.TextAlign = ContentAlignment.TopCenter;
+            saveGameToolStripMenuItem.Click += saveGame;
             // 
             // loadToolStripMenuItem
             // 
-            loadToolStripMenuItem.Font = new Font("Segoe UI", 16F);
+            loadToolStripMenuItem.Font = new Font("Tahoma", 9F);
             loadToolStripMenuItem.ForeColor = Color.Black;
             loadToolStripMenuItem.Name = "loadToolStripMenuItem";
-            loadToolStripMenuItem.Size = new Size(225, 54);
-            loadToolStripMenuItem.Text = "Button";
+            loadToolStripMenuItem.Size = new Size(270, 34);
+            loadToolStripMenuItem.Text = "Load..";
             loadToolStripMenuItem.TextAlign = ContentAlignment.TopCenter;
             // 
             // quitGameToolStripMenuItem
             // 
-            quitGameToolStripMenuItem.Font = new Font("Segoe UI", 16F);
+            quitGameToolStripMenuItem.Font = new Font("Tahoma", 9F);
             quitGameToolStripMenuItem.ForeColor = Color.Black;
             quitGameToolStripMenuItem.Name = "quitGameToolStripMenuItem";
-            quitGameToolStripMenuItem.Size = new Size(217, 54);
-            quitGameToolStripMenuItem.Text = "Button";
+            quitGameToolStripMenuItem.Size = new Size(270, 34);
+            quitGameToolStripMenuItem.Text = "Quit";
             quitGameToolStripMenuItem.TextAlign = ContentAlignment.TopCenter;
             // 
             // textBoxRed
@@ -520,21 +522,30 @@
             textBoxRedPieces.BackColor = Color.White;
             textBoxRedPieces.Location = new Point(670, 54);
             textBoxRedPieces.Name = "textBoxRedPieces";
-            textBoxRedPieces.Size = new Size(172, 31);
+            textBoxRedPieces.Size = new Size(191, 31);
             textBoxRedPieces.TabIndex = 28;
             // 
             // textBoxBluePieces
             // 
             textBoxBluePieces.Location = new Point(670, 108);
             textBoxBluePieces.Name = "textBoxBluePieces";
-            textBoxBluePieces.Size = new Size(172, 31);
+            textBoxBluePieces.Size = new Size(191, 31);
             textBoxBluePieces.TabIndex = 29;
+            // 
+            // roundCounter
+            // 
+            roundCounter.Location = new Point(553, 162);
+            roundCounter.Name = "roundCounter";
+            roundCounter.Size = new Size(111, 31);
+            roundCounter.TabIndex = 30;
+            roundCounter.Text = "Round: 1";
             // 
             // Mills
             // 
             AutoScaleDimensions = new SizeF(10F, 25F);
             AutoScaleMode = AutoScaleMode.Font;
             ClientSize = new Size(978, 544);
+            Controls.Add(roundCounter);
             Controls.Add(textBoxBluePieces);
             Controls.Add(textBoxRedPieces);
             Controls.Add(textBoxBlue);
@@ -545,8 +556,7 @@
             MaximumSize = new Size(1000, 600);
             MinimumSize = new Size(1000, 600);
             Name = "Mills";
-            Text = "Form1";
-            Load += Mills_Load;
+            Text = "Nine Men's Morris";
             panel1.ResumeLayout(false);
             menuStrip1.ResumeLayout(false);
             menuStrip1.PerformLayout();
@@ -592,5 +602,6 @@
         private TextBox textBoxBlue;
         private TextBox textBoxRedPieces;
         private TextBox textBoxBluePieces;
+        private TextBox roundCounter;
     }
 }

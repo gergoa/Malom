@@ -10,14 +10,10 @@ namespace Malom.Model
     {
         public int Position { get; set; }
         public int? SelectedPosition { get; set; }
-        public string PlayerOnTurn { get; set; }  // "Red", "Blue"
-        public int Round { get; set; }
-        public MillsTileEventArgs(string playerOnTurn, int? selectedPosition, int position, int round)
+        public MillsTileEventArgs(int? selectedPosition, int position)
         {
-            PlayerOnTurn = playerOnTurn;
             SelectedPosition = selectedPosition;
             Position = position;
-            Round = round;
         }
     }
 }

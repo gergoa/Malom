@@ -8,15 +8,21 @@ namespace MalomView
         Button[] buttons = new Button[24];
         private const int initialWidth = 1000;
         private const float winRatio = 1.8f;
+        private const string starterPlayer = "Red";
         public Mills()
         {
-            model = new GameModel();
+            model = new GameModel(starterPlayer);
             InitializeComponent();
 
             model.TilePlaced += TilePlaced;
             model.TileMoved += TileMoved;
             model.TileDeleted += TileDeleted;
             model.RoundProgressed += GameProgressed;
+            model.GameOver += (s, e) =>
+            {
+                MessageBox.Show(model.PlayerOnTurn + " wins!", "Game Over", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                Application.Exit();
+            };
             //this.Resize += UISizeChanged;
 
             InitializeControls();
@@ -52,7 +58,6 @@ namespace MalomView
         }
         private void InitializeGraphics()
         {
-            this.Text = "Red to Placing; Round 1";
             this.Size = new Size(initialWidth, (int)(initialWidth / winRatio));
             this.MinimumSize = this.Size;
             panel1.MinimumSize = panel1.Size;
@@ -74,6 +79,16 @@ namespace MalomView
                 }
 
             }
+            if (starterPlayer == "Red")
+            {
+                textBoxRed.BackColor = Color.LightYellow;
+                textBoxBlue.BackColor = Color.White;
+            }
+            else
+            {
+                textBoxBlue.BackColor = Color.LightYellow;
+                textBoxRed.BackColor = Color.White;
+            }
         }
         #endregion
 
@@ -81,8 +96,8 @@ namespace MalomView
 
         private void GameProgressed(object? sender, MillsEventArgs e)
         {
-            this.Text = e.PlayerOnTurn + " to " + e.NextAction + "; Round " + (e.Round + 1);
-            if (e.PlayerOnTurn == "Red")
+            roundCounter.Text = "Round: " + (model.Steps+ 1).ToString();
+            if (model.PlayerOnTurn == "Red")
             {
                 textBoxRed.BackColor = Color.LightYellow;
                 textBoxBlue.BackColor = Color.White;
@@ -98,9 +113,8 @@ namespace MalomView
         {
             buttons[e.Position].ForeColor = Color.Transparent;
             buttons[e.Position].Text = "";
-            buttons[e.Position].FlatAppearance.MouseOverBackColor = Color.FromArgb(100, 255, 255, 255);
 
-            if (e.PlayerOnTurn == "Blue")
+            if (model.PlayerOnTurn == "Blue")
             {
                 textBoxRedPieces.Text = textBoxRedPieces.Text + "\u274C";
             }
@@ -115,17 +129,14 @@ namespace MalomView
         {
             if (e.SelectedPosition == null) throw new Exception("SelectedPosition was null");
             buttons[(int)e.SelectedPosition].ForeColor = Color.Transparent;
-            buttons[(int)e.SelectedPosition].FlatAppearance.MouseOverBackColor = Color.FromArgb(100, 255, 255, 255);
             buttons[(int)e.SelectedPosition].Text = "";
-            buttons[e.Position].ForeColor = e.PlayerOnTurn == "Red" ? Color.Red : Color.Blue;
-            buttons[e.Position].FlatAppearance.MouseOverBackColor = e.PlayerOnTurn == "Red" ? Color.DarkRed : Color.DarkBlue;
+            buttons[e.Position].ForeColor = model.PlayerOnTurn == "Red" ? Color.Red : Color.Blue;
             buttons[e.Position].Text = "\u25C9";
         }
 
         private void TilePlaced(object? sender, MillsTileEventArgs e)
         {
-            buttons[e.Position].ForeColor = e.PlayerOnTurn == "Red" ? Color.Red : Color.Blue;
-            buttons[e.Position].FlatAppearance.MouseOverBackColor = e.PlayerOnTurn == "Red" ? Color.DarkRed : Color.DarkBlue;
+            buttons[e.Position].ForeColor = model.PlayerOnTurn == "Red" ? Color.Red : Color.Blue;
             buttons[e.Position].Text = "\u25C9";
         }
 
@@ -137,9 +148,9 @@ namespace MalomView
 
         #endregion
 
-        private void Mills_Load(object sender, EventArgs e)
+        private void saveGame(object sender, EventArgs e)
         {
-
+            model.SaveGame("C:\\Users\\gergo\\Documents\\prog\\eva\\test.txt");
         }
     }
 }
