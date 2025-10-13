@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Malom.Persistence;
 
 namespace Malom.Model
 {
@@ -17,6 +18,8 @@ namespace Malom.Model
         private bool _removing;
         private int? _selectedPiece;
 
+        private IFileHandler _fileHandler;
+
         private enum GamePhase { Placing, Moving, Removing }
         private GamePhase Phase =>
             _removing ? GamePhase.Removing :
@@ -27,12 +30,17 @@ namespace Malom.Model
 
         #region Properties
 
-        public String PlayerOnTurn => _playerOnTurn == Player.Red ? "Red" : "Blue";
-
+        public TableData TableData {  get { return _tableData; } }
+        public string PlayerOnTurn { get { return _playerOnTurn == Player.Red ? "Red" : "Blue"; } }
+        public int Steps {  get { return _steps; } }
         #endregion
 
         #region Events
-        public event EventHandler<MillsEventArgs>? TileClicked;
+        public event EventHandler<MillsTileEventArgs>? TilePlaced;
+        public event EventHandler<MillsTileEventArgs>? TileMoved;
+        public event EventHandler<MillsTileEventArgs>? TileDeleted;
+
+        public event EventHandler<MillsEventArgs>? RoundProgressed;
         public event EventHandler<MillsEventArgs>? GameOver;
 
         #endregion
@@ -40,16 +48,32 @@ namespace Malom.Model
 
         #region Constructor
 
-        public GameModel()
+        public GameModel(string startingPlayer)
         {
             //TODO - Implement persistence in constructor
-            _tableData = new TableData();
-            _playerOnTurn = Player.Red;
-            _steps = 0;
-            _removing = false;
+                _tableData = new TableData();
+                _playerOnTurn = startingPlayer == "Red" ? Player.Red  : 
+                                startingPlayer == "Blue" ? Player.Blue :
+                                throw new ArgumentException("Invalid player provided!");
+                _steps = 0;
+                _removing = false;
+                _fileHandler = new MillsFileHandler();
         }
 
         #endregion
+
+        private bool IsGameOver()
+        { 
+            Player opponent = _playerOnTurn == Player.Red ? Player.Blue : Player.Red;
+
+            int opponentPieces = 0;
+            for (int i = 0; i < 24; i++)
+            {
+                if (_tableData.GetTile(i).Occupier == opponent) opponentPieces++;
+            }
+
+            return opponentPieces < 3 && _steps > 18;
+        }
 
         #region Methods
         public void NewGame()
@@ -67,12 +91,14 @@ namespace Malom.Model
             {
                 case GamePhase.Placing:
                     success = _tableData.SetTile(to, _playerOnTurn);
+                    if (success) TilePlaced?.Invoke(this, new MillsTileEventArgs(null, to));
                     break;
 
                 case GamePhase.Moving:
                     if (_selectedPiece != null)
                     {
                         success = _tableData.Move((int)_selectedPiece, to, _playerOnTurn);
+                        if (success) TileMoved?.Invoke(this, new MillsTileEventArgs(_selectedPiece, to));
                         _selectedPiece = null;
                     }
                     else
@@ -86,10 +112,10 @@ namespace Malom.Model
                     success = _tableData.IsRemovable(to, _playerOnTurn) 
                         ? _tableData.ClearTile(to, _playerOnTurn) 
                         : false;
+                    if (success) TileDeleted?.Invoke(this, new MillsTileEventArgs(null, to));
+                    if (IsGameOver()) GameOver?.Invoke(this, new MillsEventArgs(Phase.ToString()));
                     break;
             }
-            //Inform model that tile has been clicked
-            TileClicked?.Invoke(this, new MillsEventArgs(_playerOnTurn.ToString(), _selectedPiece, _steps, Phase.ToString() ));
             if (!success) return false;
 
             //end of round conditions, change player
@@ -100,8 +126,14 @@ namespace Malom.Model
                 _playerOnTurn = _playerOnTurn == Player.Red ? Player.Blue : Player.Red;
                 _steps++;
             }
+            RoundProgressed?.Invoke(this, new MillsEventArgs(Phase.ToString()));
 
             return true;
+        }
+
+        public bool SaveGame(string path)
+        {
+            return _fileHandler.SaveFile(this,path);
         }
         #endregion
     }

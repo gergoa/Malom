@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 namespace Malom.Model
 { 
 
-    internal class TableData
+    public class TableData
     {
         private readonly Tile[] _tiles;
 
@@ -36,7 +36,7 @@ namespace Malom.Model
             Connect(_tiles[12], _tiles[13], Direction.Right); Connect(_tiles[12], _tiles[17], Direction.Down);
             Connect(_tiles[13], _tiles[20], Direction.Down);
 
-            Connect(_tiles[14], _tiles[23], Direction.Down);
+            Connect(_tiles[14], _tiles[23], Direction.Down); Connect(_tiles[13], _tiles[14], Direction.Right);
 
             Connect(_tiles[15], _tiles[16], Direction.Right); 
             Connect(_tiles[16], _tiles[17], Direction.Right); Connect(_tiles[16], _tiles[19], Direction.Down);
@@ -57,6 +57,7 @@ namespace Malom.Model
             to.Neighbours[((int)dirFromA + 2) % 4] = from;
         }
 
+        private bool CanFly(Player p) => _tiles.Count(t => t.Occupier == p) == 3;
         #endregion
 
         #region Public Methods
@@ -95,16 +96,16 @@ namespace Malom.Model
         public bool Move(int from, int to, Player p)
         {
             if (from < 0 || from >= 24 || to < 0 || to >= 24
-                || !(_tiles[from].Neighbours.Contains(_tiles[to]))
                 || _tiles[from].Occupier != p
                 || _tiles[to].Occupier != Player.Empty) return false;
+
+            if (!(_tiles[from].Neighbours.Contains(_tiles[to])) && !CanFly(p)) return false;
 
             SetTile(to, p);
             ClearTile(from);
             return true;
         }
 
-        //TODO
         public bool HasMill(int i)
         {
             Tile t = _tiles[i];
@@ -132,8 +133,6 @@ namespace Malom.Model
             }
             return false;
         }
-
-        //TODO - iterate through all mills, if there are tiles not in mill yet, tile in mill can't be removed.
         public bool IsRemovable(int i, Player p)
         {
             Tile t = _tiles[i];
@@ -142,7 +141,7 @@ namespace Malom.Model
 
             for (int j = 0; j < 24; j++)
             {
-                if (_tiles[j].Occupier != Player.Empty && !HasMill(j)) return false;
+                if (_tiles[j].Occupier != Player.Empty && _tiles[j].Occupier != p && !HasMill(j)) return false;
             }
 
             return true;
