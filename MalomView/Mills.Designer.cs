@@ -64,9 +64,12 @@
             textBoxBlue = new TextBox();
             textBoxRedPieces = new TextBox();
             textBoxBluePieces = new TextBox();
-            roundCounter = new TextBox();
+            statusStrip1 = new StatusStrip();
+            roundTrackerLabel = new ToolStripStatusLabel();
+            playerTurnLabel = new ToolStripStatusLabel();
             panel1.SuspendLayout();
             menuStrip1.SuspendLayout();
+            statusStrip1.SuspendLayout();
             SuspendLayout();
             // 
             // button1
@@ -459,9 +462,10 @@
             startNewToolStripMenuItem.Font = new Font("Tahoma", 9F);
             startNewToolStripMenuItem.ForeColor = Color.Black;
             startNewToolStripMenuItem.Name = "startNewToolStripMenuItem";
-            startNewToolStripMenuItem.Size = new Size(270, 34);
+            startNewToolStripMenuItem.Size = new Size(197, 34);
             startNewToolStripMenuItem.Text = "New Game";
             startNewToolStripMenuItem.TextAlign = ContentAlignment.TopCenter;
+            startNewToolStripMenuItem.Click += OnNewGame;
             // 
             // saveLoadToolStripMenuItem
             // 
@@ -469,7 +473,7 @@
             saveLoadToolStripMenuItem.Font = new Font("Tahoma", 9F);
             saveLoadToolStripMenuItem.ForeColor = Color.Black;
             saveLoadToolStripMenuItem.Name = "saveLoadToolStripMenuItem";
-            saveLoadToolStripMenuItem.Size = new Size(270, 34);
+            saveLoadToolStripMenuItem.Size = new Size(197, 34);
             saveLoadToolStripMenuItem.Text = "Save/Load";
             saveLoadToolStripMenuItem.TextAlign = ContentAlignment.TopCenter;
             // 
@@ -478,28 +482,30 @@
             saveGameToolStripMenuItem.Font = new Font("Tahoma", 9F);
             saveGameToolStripMenuItem.ForeColor = Color.Black;
             saveGameToolStripMenuItem.Name = "saveGameToolStripMenuItem";
-            saveGameToolStripMenuItem.Size = new Size(270, 34);
+            saveGameToolStripMenuItem.Size = new Size(158, 34);
             saveGameToolStripMenuItem.Text = "Save..";
             saveGameToolStripMenuItem.TextAlign = ContentAlignment.TopCenter;
-            saveGameToolStripMenuItem.Click += saveGame;
+            saveGameToolStripMenuItem.Click += OnSaveGame;
             // 
             // loadToolStripMenuItem
             // 
             loadToolStripMenuItem.Font = new Font("Tahoma", 9F);
             loadToolStripMenuItem.ForeColor = Color.Black;
             loadToolStripMenuItem.Name = "loadToolStripMenuItem";
-            loadToolStripMenuItem.Size = new Size(270, 34);
+            loadToolStripMenuItem.Size = new Size(158, 34);
             loadToolStripMenuItem.Text = "Load..";
             loadToolStripMenuItem.TextAlign = ContentAlignment.TopCenter;
+            loadToolStripMenuItem.Click += OnLoadGame;
             // 
             // quitGameToolStripMenuItem
             // 
             quitGameToolStripMenuItem.Font = new Font("Tahoma", 9F);
             quitGameToolStripMenuItem.ForeColor = Color.Black;
             quitGameToolStripMenuItem.Name = "quitGameToolStripMenuItem";
-            quitGameToolStripMenuItem.Size = new Size(270, 34);
+            quitGameToolStripMenuItem.Size = new Size(197, 34);
             quitGameToolStripMenuItem.Text = "Quit";
             quitGameToolStripMenuItem.TextAlign = ContentAlignment.TopCenter;
+            quitGameToolStripMenuItem.Click += OnQuitGame;
             // 
             // textBoxRed
             // 
@@ -522,30 +528,47 @@
             textBoxRedPieces.BackColor = Color.White;
             textBoxRedPieces.Location = new Point(670, 54);
             textBoxRedPieces.Name = "textBoxRedPieces";
+            textBoxRedPieces.ReadOnly = true;
             textBoxRedPieces.Size = new Size(191, 31);
             textBoxRedPieces.TabIndex = 28;
             // 
             // textBoxBluePieces
             // 
+            textBoxBluePieces.BackColor = Color.White;
             textBoxBluePieces.Location = new Point(670, 108);
             textBoxBluePieces.Name = "textBoxBluePieces";
+            textBoxBluePieces.ReadOnly = true;
             textBoxBluePieces.Size = new Size(191, 31);
             textBoxBluePieces.TabIndex = 29;
             // 
-            // roundCounter
+            // statusStrip1
             // 
-            roundCounter.Location = new Point(553, 162);
-            roundCounter.Name = "roundCounter";
-            roundCounter.Size = new Size(111, 31);
-            roundCounter.TabIndex = 30;
-            roundCounter.Text = "Round: 1";
+            statusStrip1.ImageScalingSize = new Size(24, 24);
+            statusStrip1.Items.AddRange(new ToolStripItem[] { roundTrackerLabel, playerTurnLabel });
+            statusStrip1.Location = new Point(0, 512);
+            statusStrip1.Name = "statusStrip1";
+            statusStrip1.Size = new Size(978, 32);
+            statusStrip1.TabIndex = 31;
+            statusStrip1.Text = "statusStrip1";
+            // 
+            // roundTrackerLabel
+            // 
+            roundTrackerLabel.Name = "roundTrackerLabel";
+            roundTrackerLabel.Size = new Size(179, 25);
+            roundTrackerLabel.Text = "toolStripStatusLabel1";
+            // 
+            // playerTurnLabel
+            // 
+            playerTurnLabel.Name = "playerTurnLabel";
+            playerTurnLabel.Size = new Size(179, 25);
+            playerTurnLabel.Text = "toolStripStatusLabel1";
             // 
             // Mills
             // 
             AutoScaleDimensions = new SizeF(10F, 25F);
             AutoScaleMode = AutoScaleMode.Font;
             ClientSize = new Size(978, 544);
-            Controls.Add(roundCounter);
+            Controls.Add(statusStrip1);
             Controls.Add(textBoxBluePieces);
             Controls.Add(textBoxRedPieces);
             Controls.Add(textBoxBlue);
@@ -560,6 +583,8 @@
             panel1.ResumeLayout(false);
             menuStrip1.ResumeLayout(false);
             menuStrip1.PerformLayout();
+            statusStrip1.ResumeLayout(false);
+            statusStrip1.PerformLayout();
             ResumeLayout(false);
             PerformLayout();
         }
@@ -602,6 +627,8 @@
         private TextBox textBoxBlue;
         private TextBox textBoxRedPieces;
         private TextBox textBoxBluePieces;
-        private TextBox roundCounter;
+        private StatusStrip statusStrip1;
+        private ToolStripStatusLabel roundTrackerLabel;
+        private ToolStripStatusLabel playerTurnLabel;
     }
 }

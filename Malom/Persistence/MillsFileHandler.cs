@@ -9,25 +9,46 @@ namespace Malom.Persistence
 {
     public class MillsFileHandler : IFileHandler
     {
-        public GameModel? OpenFile(string path)
+        public TableData? OpenFile(string path)
         {
-            return null;
+            TableData? newData;
+            try
+            {
+                using (StreamReader sr = new StreamReader(path))
+                {
+                    string[]? args = sr.ReadLine()?.Split(" ") ?? throw new Exception("Invalid file content!");
+                    string playerOnTurn = args[1];
+                    int steps = int.Parse(args[0]);
+                    int removedRedPieces = int.Parse(args[2]);
+                    int removedBluePieces = int.Parse(args[3]);
+                    newData = new TableData(playerOnTurn, steps, (removedRedPieces, removedBluePieces));
+                    for (int i = 0; i < 24; i++)
+                    {
+                        string? occupier = sr.ReadLine()?.Split(" ")[0];
+                        newData.SetTile(i, occupier == "Red" ? Player.Red :
+                                           occupier == "Blue" ? Player.Blue :
+                                           occupier == "Empty" ? Player.Empty :
+                                           throw new Exception("Invalid file content!"));
+                    }
+                }
+            }
+            catch (Exception e)
+            {
+                throw new IOException("Could not open file!", e);
+            }
+            return newData;
         }
 
-        public bool SaveFile(GameModel gameState, string path)
+        public bool SaveFile(TableData gameState, string path)
         {
             try
             {
                 using (StreamWriter sw = new StreamWriter(path))
                 {
-                    sw.WriteLine(gameState.Steps.ToString() + " " + gameState.PlayerOnTurn);
+                    sw.WriteLine(gameState.Steps.ToString() + " " + gameState.PlayerOnTurn + " " + gameState.RemovedRedPieces.ToString() + " " + gameState.RemovedBluePieces.ToString());
                     for (int i = 0; i < 24; i++)
                     {
-                        string[] neighbours = gameState.TableData.GetTile(i).Neighbours
-                            .Select(x => x == null ? "Empty" : x.Occupier.ToString()).ToArray();
-                        sw.Write(gameState.TableData.GetTile(i).Occupier.ToString() +" ");
-                        foreach (var str in neighbours) { sw.Write(str + " "); }
-                        sw.Write("\n");
+                        sw.WriteLine(gameState.GetTile(i).Occupier.ToString());
                     }
                     return true;
                 }

@@ -5,15 +5,26 @@ using System.Reflection.Metadata.Ecma335;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Malom.Model
+namespace Malom.Persistence
 { 
 
     public class TableData
     {
         private readonly Tile[] _tiles;
+        private Player _playerOnTurn;
+        private int _steps;
+        private (int, int) _removedPieces;
+
+        #region Properties
+
+        public Player PlayerOnTurn { get { return _playerOnTurn; } set { _playerOnTurn = value; } }
+        public int Steps { get { return _steps; } set { _steps = value; } }
+        public int RemovedRedPieces { get { return _removedPieces.Item1; } set { _removedPieces.Item1 = value; } }
+        public int RemovedBluePieces { get { return _removedPieces.Item2; } set { _removedPieces.Item2 = value; } }
+        #endregion
 
         #region Constructor
-        public TableData()
+        public TableData(string startingPlayer)
         {   
             _tiles = new Tile[24];
             for (int i = 0; i < 24; i++) { _tiles[i] = new Tile(); }
@@ -32,6 +43,7 @@ namespace Malom.Model
 
             Connect(_tiles[9], _tiles[10], Direction.Right); Connect(_tiles[9], _tiles[21], Direction.Down);
             Connect(_tiles[10], _tiles[11], Direction.Right); Connect(_tiles[10], _tiles[18], Direction.Down);
+            Connect(_tiles[11], _tiles[15], Direction.Down);
 
             Connect(_tiles[12], _tiles[13], Direction.Right); Connect(_tiles[12], _tiles[17], Direction.Down);
             Connect(_tiles[13], _tiles[20], Direction.Down);
@@ -46,15 +58,25 @@ namespace Malom.Model
             Connect(_tiles[21], _tiles[22], Direction.Right);
             Connect(_tiles[22], _tiles[23], Direction.Right);
 
+            _steps = 0;
+            _playerOnTurn = startingPlayer == "Red" ? Player.Red :
+                            startingPlayer == "Blue" ? Player.Blue :
+                            throw new ArgumentException("Invalid player provided!");
+
         }
 
+        public TableData(string playerOnTurn, int steps, (int, int) removedPieces) : this(playerOnTurn)
+        {
+            _steps = steps;
+            _removedPieces = removedPieces;
+        }
         #endregion
 
         #region Private Methods
         private static void Connect(Tile from, Tile to, Direction dirFromA)
         {
-            from.Neighbours[(int)dirFromA] = to;
-            to.Neighbours[((int)dirFromA + 2) % 4] = from;
+            from.SetNeighbour((int)dirFromA,to);
+            to.SetNeighbour((int)(dirFromA + 2) % 4,from);
         }
 
         private bool CanFly(Player p) => _tiles.Count(t => t.Occupier == p) == 3;
@@ -81,8 +103,17 @@ namespace Malom.Model
         public bool ClearTile(int i, Player p)
         {
             if (_tiles[i].Occupier == Player.Empty || _tiles[i].Occupier == p) return false;
-
             _tiles[i].Occupier = Player.Empty;
+
+            if (_playerOnTurn == Player.Blue)
+            {
+                RemovedRedPieces++;
+            }
+            else if (PlayerOnTurn == Player.Red)
+            {
+                RemovedBluePieces++;
+            }
+
             return true;
         }
 
@@ -99,7 +130,7 @@ namespace Malom.Model
                 || _tiles[from].Occupier != p
                 || _tiles[to].Occupier != Player.Empty) return false;
 
-            if (!(_tiles[from].Neighbours.Contains(_tiles[to])) && !CanFly(p)) return false;
+            if (!_tiles[from].Neighbours.Contains(_tiles[to]) && !CanFly(p)) return false;
 
             SetTile(to, p);
             ClearTile(from);

@@ -6,23 +6,15 @@ namespace MalomView
     {
         private GameModel model;
         Button[] buttons = new Button[24];
-        private const int initialWidth = 1000;
-        private const float winRatio = 1.8f;
-        private const string starterPlayer = "Red";
+        private readonly int initialWidth = 1000;
+        private readonly float winRatio = 1.8f;
+        private readonly string starterPlayer = "Blue";
         public Mills()
         {
             model = new GameModel(starterPlayer);
             InitializeComponent();
 
-            model.TilePlaced += TilePlaced;
-            model.TileMoved += TileMoved;
-            model.TileDeleted += TileDeleted;
-            model.RoundProgressed += GameProgressed;
-            model.GameOver += (s, e) =>
-            {
-                MessageBox.Show(model.PlayerOnTurn + " wins!", "Game Over", MessageBoxButtons.OK, MessageBoxIcon.Information);
-                Application.Exit();
-            };
+            InitializeHandlers();
             //this.Resize += UISizeChanged;
 
             InitializeControls();
@@ -40,19 +32,83 @@ namespace MalomView
 
         #region Methods
 
+        private void InitializeHandlers()
+        {
+            model.TilePlaced += TilePlaced;
+            model.TileMoved += TileMoved;
+            model.TileDeleted += TileDeleted;
+            model.RoundProgressed += GameProgressed;
+            model.GameLoaded += GameLoaded;
+            model.GameOver += GameOver;
+        }
+
+        private void GameOver(object? sender, MillsEventArgs e)
+        {
+            if (MessageBox.Show(model.PlayerOnTurn + " has won the game!\n" + "Would you like to start a new game?",
+                        "New Game", MessageBoxButtons.YesNo, MessageBoxIcon.Information) == DialogResult.Yes)
+            {
+                OnNewGame(sender!, new());
+            }
+            else
+            {
+                Application.Exit();
+            }
+        }
+
+        private void GameLoaded(object? sender, MillsEventArgs e)
+        {
+            //Update view from model.
+            roundTrackerLabel.Text = "Round: " + (model.TableData.Steps + 1).ToString();
+            if (model.PlayerOnTurn == "Red")
+            {
+                textBoxRed.BackColor = Color.LightYellow;
+                textBoxBlue.BackColor = Color.White;
+            }
+            else
+            {
+                textBoxBlue.BackColor = Color.LightYellow;
+                textBoxRed.BackColor = Color.White;
+            }
+
+            playerTurnLabel.Text = "Player on turn: " + model.PlayerOnTurn + "; Currently " + e.NextAction;
+
+            textBoxRedPieces.Text = new('\u274C', model.TableData.RemovedRedPieces);
+            textBoxBluePieces.Text = new ('\u274C', model.TableData.RemovedBluePieces);
+
+            for (int i = 0; i < 24; i++)
+            {
+                switch (model.TableData.GetTile(i).Occupier.ToString())
+                {
+                    case "Red":
+                        buttons[i].ForeColor = Color.Red;
+                        buttons[i].Text = "\u25C9";
+                        break;
+                    case "Blue":
+                        buttons[i].ForeColor = Color.Blue;
+                        buttons[i].Text = "\u25C9";
+                        break;
+                    case "Empty":
+                        buttons[i].ForeColor = Color.Transparent;
+                        buttons[i].Text = "";
+                        break;
+                }
+            }
+        }
+
         private void InitializeControls()
         {
             foreach (Control control in panel1.Controls)
             {
                 if (control is Button b)
                 {
-                    b.Click += B_Click;
+                    b.Click += OnButtonClicked;
                     b.Tag = int.Parse(String.Join("",
                         b.Text.Where(x =>
                         Char.IsNumber(x))
                         .ToList())
                         );
                     buttons[(int)b.Tag - 1] = b;
+                    b.Text = "";
                 }
             }
         }
@@ -89,6 +145,9 @@ namespace MalomView
                 textBoxBlue.BackColor = Color.LightYellow;
                 textBoxRed.BackColor = Color.White;
             }
+
+            playerTurnLabel.Text = "Player on turn: " + starterPlayer + " ,Currently Placing";
+            roundTrackerLabel.Text = "Round: 1";
         }
         #endregion
 
@@ -96,7 +155,7 @@ namespace MalomView
 
         private void GameProgressed(object? sender, MillsEventArgs e)
         {
-            roundCounter.Text = "Round: " + (model.Steps+ 1).ToString();
+            roundTrackerLabel.Text = "Round: " + (model.TableData.Steps + 1).ToString();
             if (model.PlayerOnTurn == "Red")
             {
                 textBoxRed.BackColor = Color.LightYellow;
@@ -107,6 +166,8 @@ namespace MalomView
                 textBoxBlue.BackColor = Color.LightYellow;
                 textBoxRed.BackColor = Color.White;
             }
+
+            playerTurnLabel.Text = "Player on turn: " + model.PlayerOnTurn + " ,Currently " + e.NextAction;
         }
 
         private void TileDeleted(object? sender, MillsTileEventArgs e)
@@ -116,11 +177,11 @@ namespace MalomView
 
             if (model.PlayerOnTurn == "Blue")
             {
-                textBoxRedPieces.Text = textBoxRedPieces.Text + "\u274C";
+                textBoxRedPieces.Text = new('\u274C',model.TableData.RemovedRedPieces);
             }
             else
             {
-                textBoxBluePieces.Text = textBoxBluePieces.Text + "\u274C";
+                textBoxBluePieces.Text = new('\u274C', model.TableData.RemovedBluePieces);
             }
 
         }
@@ -140,17 +201,71 @@ namespace MalomView
             buttons[e.Position].Text = "\u25C9";
         }
 
-        private void B_Click(object? sender, EventArgs e)
+        private void OnButtonClicked(object? sender, EventArgs e)
         {
-            int buttonID = (int)((Button)sender).Tag - 1;
-            model.Update(buttonID);
+            if (sender != null)
+            {
+                int buttonID = (int)((Button)sender).Tag! - 1;
+                model.Update(buttonID);
+            }
         }
 
-        #endregion
 
-        private void saveGame(object sender, EventArgs e)
+        private void OnSaveGame(object sender, EventArgs e)
         {
-            model.SaveGame("C:\\Users\\gergo\\Documents\\prog\\eva\\test.txt");
+            //model.SaveGame("C:\\Users\\gergo\\Documents\\prog\\eva\\test.txt");
+            using (SaveFileDialog FileDialog = new SaveFileDialog())
+            {
+                FileDialog.InitialDirectory = "C:\\";
+                FileDialog.Filter = "Text files (*.txt)|*.txt";
+                FileDialog.RestoreDirectory = true;
+
+                if (FileDialog.ShowDialog() == DialogResult.OK)
+                {
+                    if (!model.SaveGame(FileDialog.FileName))
+                    {
+                        MessageBox.Show("Saving game was unsuccessful!",
+                        "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                    }
+                }
+            }
+        }
+
+        private void OnNewGame(object sender, EventArgs e)
+        {
+            model = new(starterPlayer);
+            InitializeGraphics();
+            InitializeHandlers();
+        }
+
+        private void OnLoadGame(object sender, EventArgs e)
+        {
+            using (OpenFileDialog FileDialog = new OpenFileDialog())
+            {
+                FileDialog.InitialDirectory = "C:\\";
+                FileDialog.Filter = "Text files (*.txt)|*.txt";
+                FileDialog.RestoreDirectory = true;
+
+                if (FileDialog.ShowDialog() == DialogResult.OK)
+                {
+                    if (!model.LoadGame(FileDialog.FileName))
+                    {
+                        MessageBox.Show("Loading game was unsuccessful!",
+                        "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                    }
+                }
+            }
+        }
+
+        private void OnQuitGame(object sender, EventArgs e)
+        {
+            if (MessageBox.Show("Would you like to save your game before quitting?",
+                        "Quit Game", MessageBoxButtons.YesNo, MessageBoxIcon.Question) == DialogResult.Yes)
+            {
+                OnSaveGame(sender, e);
+            }
+            Application.Exit();
         }
     }
+    #endregion
 }

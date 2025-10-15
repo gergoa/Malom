@@ -8,7 +8,7 @@ namespace Malom.Model
 {
     public class MillsEventArgs
     {
-        public string NextAction { get; set; } // "Place", "Move", "Remove"
+        public string NextAction { get; set; }
         public MillsEventArgs(string nextAction)
         {
             NextAction = nextAction;

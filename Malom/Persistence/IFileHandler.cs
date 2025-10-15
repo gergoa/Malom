@@ -9,7 +9,7 @@ namespace Malom.Persistence
 {
     public interface IFileHandler
     {
-        Model.GameModel? OpenFile(string path);
-        bool SaveFile(Model.GameModel gameState, string path);
+        TableData? OpenFile(string path);
+        bool SaveFile(TableData gameState, string path);
     }
 }
