@@ -10,6 +10,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MalomView", "MalomView\Malo
 		{869B4F69-FA4C-4D6E-B5D8-7A7252B75559} = {869B4F69-FA4C-4D6E-B5D8-7A7252B75559}
 	EndProjectSection
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MillsTest", "MillsTest\MillsTest.csproj", "{E3657A09-89A7-4F4F-8888-19AEB51ACE82}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -24,6 +26,10 @@ Global
 		{B6B3EA7B-FC58-41AB-97F3-25F851052BEA}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{B6B3EA7B-FC58-41AB-97F3-25F851052BEA}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{B6B3EA7B-FC58-41AB-97F3-25F851052BEA}.Release|Any CPU.Build.0 = Release|Any CPU
+		{E3657A09-89A7-4F4F-8888-19AEB51ACE82}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{E3657A09-89A7-4F4F-8888-19AEB51ACE82}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{E3657A09-89A7-4F4F-8888-19AEB51ACE82}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{E3657A09-89A7-4F4F-8888-19AEB51ACE82}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

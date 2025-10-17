@@ -9,9 +9,11 @@ namespace Malom.Persistence
 {
     public class MillsFileHandler : IFileHandler
     {
-        public TableData? OpenFile(string path)
+    
+        public TableState? OpenFile(string path)
         {
             TableData? newData;
+            TableState? tableState;
             try
             {
                 using (StreamReader sr = new StreamReader(path))
@@ -21,7 +23,7 @@ namespace Malom.Persistence
                     int steps = int.Parse(args[0]);
                     int removedRedPieces = int.Parse(args[2]);
                     int removedBluePieces = int.Parse(args[3]);
-                    newData = new TableData(playerOnTurn, steps, (removedRedPieces, removedBluePieces));
+                    newData = new TableData();
                     for (int i = 0; i < 24; i++)
                     {
                         string? occupier = sr.ReadLine()?.Split(" ")[0];
@@ -30,25 +32,26 @@ namespace Malom.Persistence
                                            occupier == "Empty" ? Player.Empty :
                                            throw new Exception("Invalid file content!"));
                     }
+                    tableState = new TableState(newData, steps, playerOnTurn == "Red" ? Player.Red : Player.Blue, (removedRedPieces, removedBluePieces));
                 }
             }
             catch (Exception e)
             {
                 throw new IOException("Could not open file!", e);
             }
-            return newData;
+            return tableState;
         }
 
-        public bool SaveFile(TableData gameState, string path)
+        public bool SaveFile(TableState gameState, string path)
         {
             try
             {
                 using (StreamWriter sw = new StreamWriter(path))
                 {
-                    sw.WriteLine(gameState.Steps.ToString() + " " + gameState.PlayerOnTurn + " " + gameState.RemovedRedPieces.ToString() + " " + gameState.RemovedBluePieces.ToString());
+                    sw.WriteLine(gameState.Steps.ToString() + " " + gameState.PlayerOnTurn + " " + gameState.RemovedPieces.Item1.ToString() + " " + gameState.RemovedPieces.Item2.ToString());
                     for (int i = 0; i < 24; i++)
                     {
-                        sw.WriteLine(gameState.GetTile(i).Occupier.ToString());
+                        sw.WriteLine(gameState.TableData.GetTile(i).Occupier.ToString());
                     }
                     return true;
                 }

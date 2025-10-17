@@ -6,25 +6,17 @@ using System.Text;
 using System.Threading.Tasks;
 
 namespace Malom.Persistence
-{ 
-
+{
+    public enum Direction { Up, Left, Down, Right }
     public class TableData
     {
         private readonly Tile[] _tiles;
-        private Player _playerOnTurn;
-        private int _steps;
-        private (int, int) _removedPieces;
-
         #region Properties
-
-        public Player PlayerOnTurn { get { return _playerOnTurn; } set { _playerOnTurn = value; } }
-        public int Steps { get { return _steps; } set { _steps = value; } }
-        public int RemovedRedPieces { get { return _removedPieces.Item1; } set { _removedPieces.Item1 = value; } }
-        public int RemovedBluePieces { get { return _removedPieces.Item2; } set { _removedPieces.Item2 = value; } }
+ 
         #endregion
 
         #region Constructor
-        public TableData(string startingPlayer)
+        public TableData()
         {   
             _tiles = new Tile[24];
             for (int i = 0; i < 24; i++) { _tiles[i] = new Tile(); }
@@ -58,18 +50,9 @@ namespace Malom.Persistence
             Connect(_tiles[21], _tiles[22], Direction.Right);
             Connect(_tiles[22], _tiles[23], Direction.Right);
 
-            _steps = 0;
-            _playerOnTurn = startingPlayer == "Red" ? Player.Red :
-                            startingPlayer == "Blue" ? Player.Blue :
-                            throw new ArgumentException("Invalid player provided!");
 
         }
 
-        public TableData(string playerOnTurn, int steps, (int, int) removedPieces) : this(playerOnTurn)
-        {
-            _steps = steps;
-            _removedPieces = removedPieces;
-        }
         #endregion
 
         #region Private Methods
@@ -105,14 +88,6 @@ namespace Malom.Persistence
             if (_tiles[i].Occupier == Player.Empty || _tiles[i].Occupier == p) return false;
             _tiles[i].Occupier = Player.Empty;
 
-            if (_playerOnTurn == Player.Blue)
-            {
-                RemovedRedPieces++;
-            }
-            else if (PlayerOnTurn == Player.Red)
-            {
-                RemovedBluePieces++;
-            }
 
             return true;
         }

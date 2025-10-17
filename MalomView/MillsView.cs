@@ -1,34 +1,24 @@
 using Malom.Model;
+using Malom.Persistence;
 
 namespace MalomView
 {
-    public partial class Mills : Form
+    public partial class MillsView : Form
     {
         private GameModel model;
         Button[] buttons = new Button[24];
-        private readonly int initialWidth = 1000;
-        private readonly float winRatio = 1.8f;
-        private readonly string starterPlayer = "Blue";
-        public Mills()
+        private readonly string starterPlayer = "Red";
+        private MillsFileHandler fileHandler = new MillsFileHandler();
+        public MillsView()
         {
-            model = new GameModel(starterPlayer);
+            model = new GameModel(starterPlayer, fileHandler);
             InitializeComponent();
 
             InitializeHandlers();
-            //this.Resize += UISizeChanged;
-
             InitializeControls();
             InitializeGraphics();
 
         }
-
-        /*
-        private void UISizeChanged(object? sender, EventArgs e)
-        {
-            float scaleFactor = (float)this.Width / (float)initialWidth;
-            this.Size = new Size(this.Width, (int)(this.Width / winRatio));
-            panel1.Size = new Size((int)(panel1.Width * scaleFactor), (int)(panel1.Height * scaleFactor));
-        }*/
 
         #region Methods
 
@@ -58,7 +48,7 @@ namespace MalomView
         private void GameLoaded(object? sender, MillsEventArgs e)
         {
             //Update view from model.
-            roundTrackerLabel.Text = "Round: " + (model.TableData.Steps + 1).ToString();
+            roundTrackerLabel.Text = "Round: " + (model.Steps + 1).ToString();
             if (model.PlayerOnTurn == "Red")
             {
                 textBoxRed.BackColor = Color.LightYellow;
@@ -72,8 +62,8 @@ namespace MalomView
 
             playerTurnLabel.Text = "Player on turn: " + model.PlayerOnTurn + "; Currently " + e.NextAction;
 
-            textBoxRedPieces.Text = new('\u274C', model.TableData.RemovedRedPieces);
-            textBoxBluePieces.Text = new ('\u274C', model.TableData.RemovedBluePieces);
+            textBoxRedPieces.Text = new('\u274C', model.RemovedRedPieces);
+            textBoxBluePieces.Text = new('\u274C', model.RemovedBluePieces);
 
             for (int i = 0; i < 24; i++)
             {
@@ -113,11 +103,7 @@ namespace MalomView
             }
         }
         private void InitializeGraphics()
-        {
-            this.Size = new Size(initialWidth, (int)(initialWidth / winRatio));
-            this.MinimumSize = this.Size;
-            panel1.MinimumSize = panel1.Size;
-
+        {   
             textBoxRedPieces.Text = "";
             textBoxRedPieces.ForeColor = Color.Red;
             textBoxBluePieces.Text = "";
@@ -155,7 +141,7 @@ namespace MalomView
 
         private void GameProgressed(object? sender, MillsEventArgs e)
         {
-            roundTrackerLabel.Text = "Round: " + (model.TableData.Steps + 1).ToString();
+            roundTrackerLabel.Text = "Round: " + (model.Steps + 1).ToString();
             if (model.PlayerOnTurn == "Red")
             {
                 textBoxRed.BackColor = Color.LightYellow;
@@ -177,11 +163,11 @@ namespace MalomView
 
             if (model.PlayerOnTurn == "Blue")
             {
-                textBoxRedPieces.Text = new('\u274C',model.TableData.RemovedRedPieces);
+                textBoxRedPieces.Text = new('\u274C', model.RemovedRedPieces);
             }
             else
             {
-                textBoxBluePieces.Text = new('\u274C', model.TableData.RemovedBluePieces);
+                textBoxBluePieces.Text = new('\u274C', model.RemovedBluePieces);
             }
 
         }
@@ -217,7 +203,7 @@ namespace MalomView
             using (SaveFileDialog FileDialog = new SaveFileDialog())
             {
                 FileDialog.InitialDirectory = "C:\\";
-                FileDialog.Filter = "Text files (*.txt)|*.txt";
+                FileDialog.Filter = "Nine Men's Morris Files|*.nmm";
                 FileDialog.RestoreDirectory = true;
 
                 if (FileDialog.ShowDialog() == DialogResult.OK)
@@ -233,7 +219,7 @@ namespace MalomView
 
         private void OnNewGame(object sender, EventArgs e)
         {
-            model = new(starterPlayer);
+            model = new(starterPlayer, fileHandler);
             InitializeGraphics();
             InitializeHandlers();
         }
@@ -243,7 +229,7 @@ namespace MalomView
             using (OpenFileDialog FileDialog = new OpenFileDialog())
             {
                 FileDialog.InitialDirectory = "C:\\";
-                FileDialog.Filter = "Text files (*.txt)|*.txt";
+                FileDialog.Filter = "Nine Men's Morris Files (*nmm)|*.nmm";
                 FileDialog.RestoreDirectory = true;
 
                 if (FileDialog.ShowDialog() == DialogResult.OK)
