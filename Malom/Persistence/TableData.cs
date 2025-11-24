@@ -11,9 +11,7 @@ namespace Malom.Persistence
     public class TableData
     {
         private readonly Tile[] _tiles;
-        #region Properties
- 
-        #endregion
+
 
         #region Constructor
         public TableData()

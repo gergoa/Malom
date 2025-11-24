@@ -409,7 +409,6 @@
             // 
             panel1.BackgroundImage = Properties.Resources.background;
             panel1.BackgroundImageLayout = ImageLayout.Stretch;
-            panel1.BorderStyle = BorderStyle.Fixed3D;
             panel1.Controls.Add(button3);
             panel1.Controls.Add(button15);
             panel1.Controls.Add(button24);
