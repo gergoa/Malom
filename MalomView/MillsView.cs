@@ -24,15 +24,15 @@ namespace MalomView
 
         private void InitializeHandlers()
         {
-            model.TilePlaced += TilePlaced;
-            model.TileMoved += TileMoved;
-            model.TileDeleted += TileDeleted;
-            model.RoundProgressed += GameProgressed;
-            model.GameLoaded += GameLoaded;
-            model.GameOver += GameOver;
+            model.TilePlaced += OnTilePlaced;
+            model.TileMoved += OnTileMoved;
+            model.TileDeleted += OnTileDeleted;
+            model.RoundProgressed += OnGameProgressed;
+            model.GameLoaded += OnGameLoaded;
+            model.GameOver += OnGameOver;
         }
 
-        private void GameOver(object? sender, MillsEventArgs e)
+        private void OnGameOver(object? sender, MillsEventArgs e)
         {
             if (MessageBox.Show(model.PlayerOnTurn + " has won the game!\n" + "Would you like to start a new game?",
                         "New Game", MessageBoxButtons.YesNo, MessageBoxIcon.Information) == DialogResult.Yes)
@@ -45,7 +45,7 @@ namespace MalomView
             }
         }
 
-        private void GameLoaded(object? sender, MillsEventArgs e)
+        private void OnGameLoaded(object? sender, MillsEventArgs e)
         {
             //Update view from model.
             roundTrackerLabel.Text = "Round: " + (model.Steps + 1).ToString();
@@ -139,7 +139,7 @@ namespace MalomView
 
         #region Event Handling
 
-        private void GameProgressed(object? sender, MillsEventArgs e)
+        private void OnGameProgressed(object? sender, MillsEventArgs e)
         {
             roundTrackerLabel.Text = "Round: " + (model.Steps + 1).ToString();
             if (model.PlayerOnTurn == "Red")
@@ -156,7 +156,7 @@ namespace MalomView
             playerTurnLabel.Text = "Player on turn: " + model.PlayerOnTurn + " ,Currently " + e.NextAction;
         }
 
-        private void TileDeleted(object? sender, MillsTileEventArgs e)
+        private void OnTileDeleted(object? sender, MillsTileEventArgs e)
         {
             buttons[e.Position].ForeColor = Color.Transparent;
             buttons[e.Position].Text = "";
@@ -172,7 +172,7 @@ namespace MalomView
 
         }
 
-        private void TileMoved(object? sender, MillsTileEventArgs e)
+        private void OnTileMoved(object? sender, MillsTileEventArgs e)
         {
             if (e.SelectedPosition == null) throw new Exception("SelectedPosition was null");
             buttons[(int)e.SelectedPosition].ForeColor = Color.Transparent;
@@ -181,7 +181,7 @@ namespace MalomView
             buttons[e.Position].Text = "\u25C9";
         }
 
-        private void TilePlaced(object? sender, MillsTileEventArgs e)
+        private void OnTilePlaced(object? sender, MillsTileEventArgs e)
         {
             buttons[e.Position].ForeColor = model.PlayerOnTurn == "Red" ? Color.Red : Color.Blue;
             buttons[e.Position].Text = "\u25C9";
