@@ -9,7 +9,7 @@ using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
 
-namespace MalomWPF
+namespace Malom_WPF
 {
     /// <summary>
     /// Interaction logic for MainWindow.xaml
@@ -18,6 +18,7 @@ namespace MalomWPF
     {
         public MainWindow()
         {
+            DataContext = new ViewModel.MainViewModel();
             InitializeComponent();
         }
     }

@@ -11,60 +11,52 @@ using Malom.Model;
 using Malom.Persistence;
 using System.Collections.ObjectModel;
 
-namespace MalomWPF.ViewModel
+namespace Malom_WPF.ViewModel
 {
     internal class MainViewModel : ViewModelBase
     {
         //Fields
         private GameModel model;
-        TileViewModel[] buttons = new TileViewModel[24];
-        private readonly string starterPlayer = "Red";
+        private TileViewModel[] buttons = new TileViewModel[24];
+        private readonly string starterPlayer;
 
         //Properties
         public int RoundTracker
         {
             get { return model.Steps + 1; }
-            set
-            {
-                RoundTracker = value;
-                OnPropertyChanged(nameof(RoundTracker));
-            }
         }
         public string PlayerOnTurn
         {
             get { return model.PlayerOnTurn; }
-            set
-                {
-                    PlayerOnTurn = value;
-                    OnPropertyChanged(nameof(PlayerOnTurn));
-                }
             }
         public int RedRemovedPieces
         {
             get { return model.RemovedRedPieces; }
-            set
-            {
-                RedRemovedPieces = value;
-                OnPropertyChanged(nameof(RedRemovedPieces));
-            }
         }
         public int BlueRemovedPieces
         {
             get { return model.RemovedBluePieces; }
-            set
-            {
-                BlueRemovedPieces = value;
-                OnPropertyChanged(nameof(BlueRemovedPieces));
-            }
         }
-
+        public TileViewModel[] Buttons
+        {
+            get { return buttons; }
+        }
         public MainViewModel()
         {
+            starterPlayer = Random.Shared.Next(0, 2) == 0 ? "Red" : "Blue";
             model = new GameModel(starterPlayer, new MillsFileHandler());
 
             InitializeHandlers();
             InitializeControls();
+        }
 
+        public MainViewModel(string starterPlyer)
+        {
+            starterPlayer = starterPlyer;
+            model = new GameModel(starterPlayer, new MillsFileHandler());
+
+            InitializeHandlers();
+            InitializeControls();
         }
 
         #region Methods
@@ -87,16 +79,16 @@ namespace MalomWPF.ViewModel
         private void OnGameLoaded(object? sender, MillsEventArgs e)
         {
             //Update view from model.
-            RoundTracker = model.Steps + 1;
-            PlayerOnTurn = model.PlayerOnTurn;
-            RedRemovedPieces = model.RemovedRedPieces;
-            BlueRemovedPieces = model.RemovedBluePieces;
 
             for (int i = 0; i < 24; i++)
             {
                 string occupier = model.TableData.GetTile(i).Occupier.ToString();
                 buttons[i].Occupier = occupier;
             }
+            OnPropertyChanged(nameof(RoundTracker));
+            OnPropertyChanged(nameof(PlayerOnTurn));
+            OnPropertyChanged(nameof(RedRemovedPieces));
+            OnPropertyChanged(nameof(BlueRemovedPieces));
         }
 
         private void InitializeControls()
@@ -105,6 +97,11 @@ namespace MalomWPF.ViewModel
             {
                 buttons[i] = new TileViewModel(i, "Empty", OnButtonClicked, (_) => true); //TODO
             }
+
+            OnPropertyChanged(nameof(RoundTracker));
+            OnPropertyChanged(nameof(PlayerOnTurn));
+            OnPropertyChanged(nameof(RedRemovedPieces));
+            OnPropertyChanged(nameof(BlueRemovedPieces));
         }
         #endregion
 
@@ -112,25 +109,25 @@ namespace MalomWPF.ViewModel
 
         private void OnGameProgressed(object? sender, MillsEventArgs e)
         {
-            RoundTracker = model.Steps + 1;
-            PlayerOnTurn = model.PlayerOnTurn;
+            OnPropertyChanged(nameof(RoundTracker));
+            OnPropertyChanged(nameof(PlayerOnTurn));
         }
 
-            private void OnTileDeleted(object? sender, MillsTileEventArgs e)
-            {
-                int from = e.Position;
-                buttons[from].Occupier = "Empty";
-                OnPropertyChanged(nameof(RedRemovedPieces));
-                OnPropertyChanged(nameof(BlueRemovedPieces));
-            }
+        private void OnTileDeleted(object? sender, MillsTileEventArgs e)
+        {
+            int from = e.Position;
+            buttons[from].Occupier = "Empty";
+            OnPropertyChanged(nameof(RedRemovedPieces));
+            OnPropertyChanged(nameof(BlueRemovedPieces));
+        }
 
-            private void OnTileMoved(object? sender, MillsTileEventArgs e)
-            {
-                int from = e.Position;
-                int to = e!.SelectedPosition ?? -1;
-                buttons[from].Occupier = "Empty";
-                buttons[to].Occupier = model.TableData.GetTile(to).Occupier.ToString();
-            }
+        private void OnTileMoved(object? sender, MillsTileEventArgs e)
+        {
+            int from = e.Position;
+            int to = e!.SelectedPosition ?? -1;
+            buttons[from].Occupier = "Empty";
+            buttons[to].Occupier = model.TableData.GetTile(to).Occupier.ToString();
+        }
 
         private void OnTilePlaced(object? sender, MillsTileEventArgs e)
         {
@@ -144,9 +141,10 @@ namespace MalomWPF.ViewModel
             }
         }
 
-        private void OnButtonClicked(TileViewModel button)
+        public void OnButtonClicked(TileViewModel button)
         {
             model.Update(button.Index);
+            //OnPropertyChanged(nameof(button));
         }
 
 

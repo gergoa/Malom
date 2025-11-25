@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 using System.Windows.Input;
 using System.Windows.Navigation;
 
-namespace MalomWPF.ViewModel
+namespace Malom_WPF.ViewModel
 {
     internal class TileViewModel : ViewModelBase
     {
@@ -22,7 +22,7 @@ namespace MalomWPF.ViewModel
 
         public string Occupier
         {
-            get { return _occupier; }
+            get { return _occupier == "Empty" ? "White" : _occupier; }
             set
             {
                 if (_occupier != value)

@@ -2,7 +2,7 @@
 using System.Data;
 using System.Windows;
 
-namespace MalomWPF
+namespace Malom_WPF
 {
     /// <summary>
     /// Interaction logic for App.xaml
