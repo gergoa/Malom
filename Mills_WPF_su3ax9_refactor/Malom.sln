@@ -1,0 +1,37 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.13.35919.96
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Malom", "Malom\Malom.csproj", "{869B4F69-FA4C-4D6E-B5D8-7A7252B75559}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MillsTest", "MillsTest\MillsTest.csproj", "{E3657A09-89A7-4F4F-8888-19AEB51ACE82}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Malom_WPF", "Malom_WPF\Malom_WPF.csproj", "{E75171B1-A896-48AF-AC35-D179CADA8F2D}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{869B4F69-FA4C-4D6E-B5D8-7A7252B75559}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{869B4F69-FA4C-4D6E-B5D8-7A7252B75559}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{869B4F69-FA4C-4D6E-B5D8-7A7252B75559}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{869B4F69-FA4C-4D6E-B5D8-7A7252B75559}.Release|Any CPU.Build.0 = Release|Any CPU
+		{E3657A09-89A7-4F4F-8888-19AEB51ACE82}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{E3657A09-89A7-4F4F-8888-19AEB51ACE82}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{E3657A09-89A7-4F4F-8888-19AEB51ACE82}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{E3657A09-89A7-4F4F-8888-19AEB51ACE82}.Release|Any CPU.Build.0 = Release|Any CPU
+		{E75171B1-A896-48AF-AC35-D179CADA8F2D}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{E75171B1-A896-48AF-AC35-D179CADA8F2D}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{E75171B1-A896-48AF-AC35-D179CADA8F2D}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{E75171B1-A896-48AF-AC35-D179CADA8F2D}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {85A99070-BEBB-49C2-905B-3068D75A7E8B}
+	EndGlobalSection
+EndGlobal

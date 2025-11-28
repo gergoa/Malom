@@ -120,6 +120,7 @@ namespace Malom.ViewModel
 
         private void InitializeControls()
         {
+            _boardTiles.Clear();
             for (int i = 0; i < 24; i++)
             {
                 _boardTiles.Add(new(i, Player.Empty, OnButtonClicked, (_) => true, layout[i]));
