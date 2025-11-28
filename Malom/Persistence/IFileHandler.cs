@@ -1,12 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using Malom.Model;
-using Malom.Persistence;
-
-namespace Malom.Persistence
+﻿namespace Malom.Persistence
 {
     public struct TableState
     {
@@ -29,10 +21,10 @@ namespace Malom.Persistence
         }
         public TableState(TableData tableData, int steps, Player playerOnTurn, (int, int) removedPieces)
         {
-            this._tableData = tableData;
-            this.Steps = steps;
-            this.PlayerOnTurn = playerOnTurn;
-            this.RemovedPieces = removedPieces;
+            _tableData = tableData;
+            Steps = steps;
+            PlayerOnTurn = playerOnTurn;
+            RemovedPieces = removedPieces;
         }
     }
     public interface IFileHandler

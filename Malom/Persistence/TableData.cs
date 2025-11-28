@@ -1,11 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Reflection.Metadata.Ecma335;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace Malom.Persistence
+﻿namespace Malom.Persistence
 {
     public enum Direction { Up, Left, Down, Right }
     public class TableData
@@ -15,7 +8,7 @@ namespace Malom.Persistence
 
         #region Constructor
         public TableData()
-        {   
+        {
             _tiles = new Tile[24];
             for (int i = 0; i < 24; i++) { _tiles[i] = new Tile(); }
 
@@ -40,7 +33,7 @@ namespace Malom.Persistence
 
             Connect(_tiles[14], _tiles[23], Direction.Down); Connect(_tiles[13], _tiles[14], Direction.Right);
 
-            Connect(_tiles[15], _tiles[16], Direction.Right); 
+            Connect(_tiles[15], _tiles[16], Direction.Right);
             Connect(_tiles[16], _tiles[17], Direction.Right); Connect(_tiles[16], _tiles[19], Direction.Down);
 
             Connect(_tiles[18], _tiles[19], Direction.Right);
@@ -56,8 +49,8 @@ namespace Malom.Persistence
         #region Private Methods
         private static void Connect(Tile from, Tile to, Direction dirFromA)
         {
-            from.SetNeighbour((int)dirFromA,to);
-            to.SetNeighbour((int)(dirFromA + 2) % 4,from);
+            from.SetNeighbour((int)dirFromA, to);
+            to.SetNeighbour((int)(dirFromA + 2) % 4, from);
         }
 
         private bool CanFly(Player p) => _tiles.Count(t => t.Occupier == p) == 3;

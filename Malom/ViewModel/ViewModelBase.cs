@@ -1,7 +1,7 @@
 ﻿using System.ComponentModel;
 using System.Runtime.CompilerServices;
 
-namespace Malom_WPF.ViewModel
+namespace Malom.ViewModel
 {
     public abstract class ViewModelBase : INotifyPropertyChanged
     {

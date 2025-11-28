@@ -1,10 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Reflection.Metadata.Ecma335;
-using System.Text;
-using System.Threading.Tasks;
-using Malom.Persistence;
+﻿using Malom.Persistence;
 
 namespace Malom.Model
 {
@@ -37,14 +31,18 @@ namespace Malom.Model
         public int RemovedBluePieces { get { return _removedPieces.Item2; } }
         public string PlayerOnTurn { get { return _playerOnTurn == Player.Red ? "Red" : "Blue"; } }
 
-        public TableData TableData { get {
+        public TableData TableData
+        {
+            get
+            {
                 TableData clone = new();
                 for (int i = 0; i < 24; i++)
                 {
                     clone.SetTile(i, _tableData.GetTile(i).Occupier);
                 }
                 return clone;
-            } }
+            }
+        }
 
         #endregion
 
@@ -78,7 +76,7 @@ namespace Malom.Model
         #endregion
 
         private bool IsGameOver()
-        { 
+        {
             Player opponent = _playerOnTurn == Player.Red ? Player.Blue : Player.Red;
 
             int opponentPieces = 0;
@@ -91,11 +89,6 @@ namespace Malom.Model
         }
 
         #region Methods
-        public void NewGame()
-        {
-            GameOver?.Invoke(this, new MillsEventArgs("New Game"));
-        }
-
         public bool Update(int to)
         {
             bool success = false;

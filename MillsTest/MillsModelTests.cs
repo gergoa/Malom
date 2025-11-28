@@ -18,7 +18,7 @@ namespace MillsTest
         [TestMethod]
         public void NewGameTest()
         {
-            _model.NewGame();
+            _model = new GameModel("Red", _mockFileHandler.Object);
             Assert.AreEqual(0, _model.Steps);
             Assert.AreEqual(0, _model.RemovedRedPieces);
             Assert.AreEqual(0, _model.RemovedBluePieces);
@@ -65,7 +65,7 @@ namespace MillsTest
             _model.RoundProgressed += (s, e) => { nextAction = e.NextAction; };
             _model.TileDeleted += (s, e) => { pieceDeletedEventFired = true; };
 
-            _model.NewGame();
+            _model = new GameModel("Red", _mockFileHandler.Object);
             _model.Update(0); // Red
             _model.Update(3); // Blue
             _model.Update(1); // Red
@@ -85,7 +85,7 @@ namespace MillsTest
         [TestMethod]
         public void GameLoadTest()
         {
-            _model.NewGame();
+            _model = new GameModel("Red", _mockFileHandler.Object);
             _model.Update(0);
             _model.Update(1);
             TableState savedState = new(_model.TableData, 6, Player.Red, (1, 2));
@@ -93,7 +93,7 @@ namespace MillsTest
 
             bool gameLoadedEventFired = false;
             _model.GameLoaded += (s, e) => { gameLoadedEventFired = true; };
-            _model.NewGame();
+            _model = new GameModel("Red", _mockFileHandler.Object);
             _model.LoadGame("test.nmm");
 
             Assert.IsTrue(gameLoadedEventFired);
@@ -107,10 +107,10 @@ namespace MillsTest
 
         [TestMethod]
         public void GameSaveTest()
-        { 
+        {
             _mockFileHandler.Setup(fh => fh.SaveFile(It.IsAny<TableState>(), "save.nmm")).Returns(true);
 
-            _model.NewGame();
+            _model = new GameModel("Red", _mockFileHandler.Object);
             _model.Update(0);
             _model.Update(1);
 

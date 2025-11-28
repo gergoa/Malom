@@ -1,34 +1,29 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using Microsoft.Win32;
-using System.Windows.Controls.Primitives;
-using System.Windows.Controls;
-using System.Windows;
+﻿using System.IO;
 using Malom.Model;
 using Malom.Persistence;
-using System.Collections.ObjectModel;
+using Malom.Service;
 
-namespace Malom_WPF.ViewModel
+namespace Malom.ViewModel
 {
-    internal class MainViewModel : ViewModelBase
+    public class MainViewModel : ViewModelBase
     {
+
         //Fields
+        readonly string baseDirectory = AppDomain.CurrentDomain.BaseDirectory;
         private GameModel model;
         private TileViewModel[] buttons = new TileViewModel[24];
         private readonly string starterPlayer;
-
+        private IDialogService _dialogService;
+        private string currentAction = "Placing";
         //Properties
-        public int RoundTracker
+        public string RoundTracker
         {
-            get { return model.Steps + 1; }
+            get { return $"Round: {model.Steps + 1}" + $"\nCurrently {PlayerOnTurn} is {currentAction}"; }
         }
         public string PlayerOnTurn
         {
             get { return model.PlayerOnTurn; }
-            }
+        }
         public int RedRemovedPieces
         {
             get { return model.RemovedRedPieces; }
@@ -41,20 +36,27 @@ namespace Malom_WPF.ViewModel
         {
             get { return buttons; }
         }
-        public MainViewModel()
+        //Commands
+        public DelegateCommand NewGameCommand => new DelegateCommand(_ => NewGame());
+        public DelegateCommand LoadGameCommand => new DelegateCommand(_ => LoadGame());
+        public DelegateCommand SaveGameCommand => new DelegateCommand(_ => SaveGame());
+        public DelegateCommand QuitGameCommand => new DelegateCommand(_ => QuitGame(true));
+        public MainViewModel(IDialogService dialogService)
         {
             starterPlayer = Random.Shared.Next(0, 2) == 0 ? "Red" : "Blue";
             model = new GameModel(starterPlayer, new MillsFileHandler());
 
+            _dialogService = dialogService;
             InitializeHandlers();
             InitializeControls();
         }
 
-        public MainViewModel(string starterPlyer)
+        public MainViewModel(string starterPlyer, IDialogService dialogService)
         {
             starterPlayer = starterPlyer;
             model = new GameModel(starterPlayer, new MillsFileHandler());
 
+            _dialogService = dialogService;
             InitializeHandlers();
             InitializeControls();
         }
@@ -73,6 +75,25 @@ namespace Malom_WPF.ViewModel
 
         private void OnGameOver(object? sender, MillsEventArgs e)
         {
+            if (e.NextAction == "New Game")
+            {
+                NewGame();
+                return;
+            }
+
+
+            bool res = _dialogService.DisplayYesNoMessageBox(
+                                    $"{PlayerOnTurn} player has won the game! Would you like to start a new game?",
+                                    "Game Over");
+
+            if (res)
+            {
+                NewGame();
+            }
+            else
+            {
+                QuitGame(false);
+            }
             //TODO
         }
 
@@ -95,13 +116,14 @@ namespace Malom_WPF.ViewModel
         {
             for (int i = 0; i < 24; i++)
             {
-                buttons[i] = new TileViewModel(i, "Empty", OnButtonClicked, (_) => true); //TODO
+                buttons[i] = new TileViewModel(i, Player.Empty, OnButtonClicked, (_) => true); //TODO
             }
 
             OnPropertyChanged(nameof(RoundTracker));
             OnPropertyChanged(nameof(PlayerOnTurn));
             OnPropertyChanged(nameof(RedRemovedPieces));
             OnPropertyChanged(nameof(BlueRemovedPieces));
+            OnPropertyChanged(nameof(Buttons));
         }
         #endregion
 
@@ -109,6 +131,7 @@ namespace Malom_WPF.ViewModel
 
         private void OnGameProgressed(object? sender, MillsEventArgs e)
         {
+            currentAction = e.NextAction;
             OnPropertyChanged(nameof(RoundTracker));
             OnPropertyChanged(nameof(PlayerOnTurn));
         }
@@ -123,10 +146,10 @@ namespace Malom_WPF.ViewModel
 
         private void OnTileMoved(object? sender, MillsTileEventArgs e)
         {
-            int from = e.Position;
-            int to = e!.SelectedPosition ?? -1;
+            int to = e.Position;
+            int from = e.SelectedPosition ?? throw new Exception();
             buttons[from].Occupier = "Empty";
-            buttons[to].Occupier = model.TableData.GetTile(to).Occupier.ToString();
+            buttons[to].Occupier = PlayerOnTurn;
         }
 
         private void OnTilePlaced(object? sender, MillsTileEventArgs e)
@@ -141,65 +164,47 @@ namespace Malom_WPF.ViewModel
             }
         }
 
-        public void OnButtonClicked(TileViewModel button)
+        private void OnButtonClicked(TileViewModel button)
         {
             model.Update(button.Index);
-            //OnPropertyChanged(nameof(button));
         }
 
 
-        private void OnSaveGame(object sender, EventArgs e)
+        private void SaveGame()
         {
-            /*
-            //model.SaveGame("C:\\Users\\gergo\\Documents\\prog\\eva\\test.txt");
-            using (SaveFileDialog FileDialog = new SaveFileDialog())
+            Directory.CreateDirectory(Path.Combine(baseDirectory, "Saves"));
+            string path = _dialogService.DisplaySaveFileDialog(Path.Combine(baseDirectory, "Saves"), "Nine Men's Morris Files (*.nmm)|*.nmm");
+            if (!string.IsNullOrEmpty(path))
             {
-                FileDialog.InitialDirectory = "C:\\";
-                FileDialog.Filter = "Nine Men's Morris Files|*.nmm";
-                FileDialog.RestoreDirectory = true;
-
-                if (FileDialog.ShowDialog() == DialogResult.OK)
-                {
-                    if (!model.SaveGame(FileDialog.FileName))
-                    {
-                        MessageBox.Show("Saving game was unsuccessful!",
-                        "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
-                    }
-                }
-            }*/
+                model.SaveGame(path);
+            }
         }
 
-        private void OnNewGame(object sender, EventArgs e)
+        private void NewGame()
         {
-            model = new(starterPlayer, new MillsFileHandler());
+            model = new GameModel(starterPlayer, new MillsFileHandler());
             InitializeHandlers();
             InitializeControls();
         }
 
-        private void OnLoadGame(object sender, EventArgs e)
+        private void LoadGame()
         {
-            /*
-            using (OpenFileDialog FileDialog = new OpenFileDialog())
+            string path = _dialogService.DisplayOpenFileDialog(Path.Combine(baseDirectory, "Saves"), "Nine Men's Morris Files (*.nmm)|*.nmm");
+            if (!string.IsNullOrEmpty(path))
             {
-                FileDialog.InitialDirectory = "C:\\";
-                FileDialog.Filter = "Nine Men's Morris Files (*nmm)|*.nmm";
-                FileDialog.RestoreDirectory = true;
-
-                if (FileDialog.ShowDialog() == DialogResult.OK)
-                {
-                    if (!model.LoadGame(FileDialog.FileName))
-                    {
-                        MessageBox.Show("Loading game was unsuccessful!",
-                        "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
-                    }
-                }
+                model.LoadGame(path);
             }
-            */
         }
 
-        private void OnQuitGame(object sender, EventArgs e)
+        private void QuitGame(bool want_save)
         {
-            OnSaveGame(sender, e);
+            if (want_save)
+            {
+                if (_dialogService.DisplayYesNoMessageBox(
+                "Would you like to save your progress?",
+                "Quit Game")) SaveGame();
+            }
+            _dialogService.CloseApplication();
         }
     }
     #endregion

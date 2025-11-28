@@ -9,11 +9,19 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <None Remove="View\background.jpg" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Page Include="App.xaml" />
+  </ItemGroup>
+
+  <ItemGroup>
     <ProjectReference Include="..\Malom\Malom.csproj" />
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="View\" />
+    <Resource Include="View\background.jpg" />
   </ItemGroup>
 
 </Project>

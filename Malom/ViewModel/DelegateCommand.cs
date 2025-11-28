@@ -1,7 +1,6 @@
-﻿using System;
-using System.Windows.Input;
+﻿using System.Windows.Input;
 
-namespace Malom_WPF.ViewModel
+namespace Malom.ViewModel
 {
     public class DelegateCommand : ICommand
     {

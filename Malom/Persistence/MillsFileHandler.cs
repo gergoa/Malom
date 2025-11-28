@@ -1,15 +1,8 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using Malom.Model;
-
-namespace Malom.Persistence
+﻿namespace Malom.Persistence
 {
     public class MillsFileHandler : IFileHandler
     {
-    
+
         public TableState? OpenFile(string path)
         {
             TableData? newData;
