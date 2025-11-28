@@ -1,4 +1,4 @@
-﻿namespace Malom.Service
+﻿namespace Malom.Model
 {
     public interface IDialogService
     {

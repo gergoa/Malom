@@ -1,7 +1,6 @@
 ﻿using System.IO;
 using Malom.Model;
 using Malom.Persistence;
-using Malom.Service;
 
 namespace Malom.ViewModel
 {

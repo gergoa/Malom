@@ -1,5 +1,5 @@
 ﻿using System.Windows;
-using Malom.Service;
+using Malom.Model;
 
 namespace Malom_WPF.View
 {
